@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h3>Students - Flask SQLAlchemy example</h3>
+    <hr />
+
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {%- endfor %}
+    <h1>wlecome to school</h1>
+    <h1>subjects are</h1>
+    {% for sub in subjects %}
+    <h2>{{ sub.name }}</h2>
+    {% endfor %} {{subject_form}} {{register_form}}
+
+    <div class="form-wrapper">
+      <form method="post" class="form">
+        <h3 class="form-heading">
+          subject name
+          <a title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+        </h3>
+        <div class="form-group">
+          <label for="name">Name</label>
+          {{ subject_form.name(class_ = 'form-control', autofocus = true) }}
+        </div>
+
+        <input
+          type="submit"
+          value="Create Venue"
+          class="btn btn-primary btn-lg btn-block"
+        />
+      </form>
+    </div>
+  </body>
+</html>
