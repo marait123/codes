@@ -44,7 +44,7 @@ class students(db.Model):
 class Subject(db.Model):
     __tablename__ = 'subjects'
     id = db.Column('subject_id', db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = None  # TODO: define a name property on with max_length = 100
     registerations = db.relationship(
         "Register", backref="subject_object", lazy=True)
 
@@ -55,10 +55,8 @@ class Subject(db.Model):
 class Register(db.Model):
     __tablename__ = "registers"
     id = db.Column('register_id', db.Integer, primary_key=True)
-    subject = db.Column(db.Integer, db.ForeignKey(
-        'subjects.subject_id'), nullable=False)
-    student = db.Column(db.Integer, db.ForeignKey(
-        'students.student_id'), nullable=False)
+    subject = None  # TODO link this property to the subject table
+    student = None  # TODO; link this property to the student table
 
     def __repr__(self) -> str:
         return '<Registeration of stud {} in {}>'.format(self.student, self.subject)
@@ -83,15 +81,16 @@ def make_subject():
     flash("created the subject")
     print(request.form.get("name"))
     try:
-        sub = Subject(request.form.get('name'))
-        db.session.add(sub)
-        db.session.commit()
-
+        # TODO: create a new subject and add it to the database
+        pass
     except:
-        db.session.rollback()
+        # TODO:  rollback in case of any error
+
+        # TODO: check the school.html for flashed messages (no implementation needed)
         flash("Error occured")
 
         pass
+    # TOOD: redirect to the school endpoint
     return redirect('/school')
 
 
