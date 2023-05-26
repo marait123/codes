@@ -1,43 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <script
       type="text/javascript"
       src="{{ url_for('static', filename = 'hello.js') }}"
     ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      h3 {
+        background-color: #f2f2f2;
+        padding: 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        padding: 10px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
   </head>
   <body>
-    <h3>
-      <a href="{{ url_for('show_all') }}"
-        >Comments - Flask SQLAlchemy example</a
+    <header>
+      <h3>
+        <a href="{{ url_for('show_all')}}"><i class="fa fa-home"></i></a>
+
+        <a href="{{ url_for('show_all') }}">home</a>
+      </h3>
+    </header>
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="pills-home-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-home"
+          type="button"
+          role="tab"
+          aria-controls="pills-home"
+          aria-selected="true"
+        >
+          Students
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-profile-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-profile"
+          type="button"
+          role="tab"
+          aria-controls="pills-profile"
+          aria-selected="false"
+        >
+          Subjects
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-contact-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-contact"
+          type="button"
+          role="tab"
+          aria-controls="pills-contact"
+          aria-selected="false"
+        >
+          Registeration
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+      <div
+        class="tab-pane fade show active"
+        id="pills-home"
+        role="tabpanel"
+        aria-labelledby="pills-home-tab"
       >
-    </h3>
+        <hr />
+        {%- for message in get_flashed_messages() %} {{ message }} {%- endfor %}
 
-    <hr />
-    {%- for message in get_flashed_messages() %} {{ message }} {%- endfor %}
+        <h3>Students (<a href="{{ url_for('new') }}">Add Student</a>)</h3>
 
-    <h3>Students (<a href="{{ url_for('new') }}">Add Student </a>)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>City</th>
+              <th>Address</th>
+              <th>Pin</th>
+            </tr>
+          </thead>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>City</th>
-          <th>Address</th>
-          <th>Pin</th>
-        </tr>
-      </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>
+                <a href="{{ url_for('student_info', student_id=student.id) }}"
+                  >{{ student.name }}</a
+                >
+              </td>
+              <td>{{ student.city }}</td>
+              <td>{{ student.addr }}</td>
+              <td>{{ student.pin }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="pills-profile"
+        role="tabpanel"
+        aria-labelledby="pills-profile-tab"
+      >
+        subjects - TODO
+      </div>
+      <div
+        class="tab-pane fade"
+        id="pills-contact"
+        role="tabpanel"
+        aria-labelledby="pills-contact-tab"
+      >
+        Registeration - TODO
+      </div>
+    </div>
 
-      <tbody>
-        {% for student in students %}
-        <tr>
-          <td>{{ student.name }}</td>
-          <td>{{ student.city }}</td>
-          <td>{{ student.addr }}</td>
-          <td>{{ student.pin }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

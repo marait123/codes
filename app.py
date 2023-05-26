@@ -10,13 +10,16 @@ from flask_migrate import Migrate
 import os
 
 from sqlalchemy.orm import backref
-from werkzeug.datastructures import ContentSecurityPolicy
 
 from forms import SubjectForm, RegisterForm
 app = Flask(__name__)
 
 # for web forms to work u need to set a secret_key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123456@localhost:5432/school'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123456@localhost:5432/school'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'postgresql://mohammed:123456@localhost:5432/school'
+
 app.config["SECRET_KEY"] = os.urandom(32)
 
 db = SQLAlchemy(app)
@@ -33,18 +36,27 @@ class students(db.Model):
     pin = db.Column(db.String(10))
     registerations = db.relationship(
         "Register", backref="student_object", lazy=True)
+    image = db.Column(db.String(100))
 
-    def __init__(self, name, city, addr, pin):
+    def __init__(self, name, city, addr, pin, image):
         self.name = name
         self.city = city
         self.addr = addr
         self.pin = pin
+        self.image = image
+
+    def __str__(self):
+        return f"student {self.name} from {self.city} with id {self.id} with image {self.image}"
+
+    def __repr__(self):
+        return f"student {self.name} from {self.city} with id {self.id} with image {self.image}"
 
 
 class Subject(db.Model):
     __tablename__ = 'subjects'
     id = db.Column('subject_id', db.Integer, primary_key=True)
-    name = None  # TODO: define a name property on with max_length = 100
+    # TODO: define a name property on with max_length = 100
+    name = db.Column(db.String(100))
     registerations = db.relationship(
         "Register", backref="subject_object", lazy=True)
 
@@ -55,8 +67,15 @@ class Subject(db.Model):
 class Register(db.Model):
     __tablename__ = "registers"
     id = db.Column('register_id', db.Integer, primary_key=True)
-    subject = None  # TODO link this property to the subject table
-    student = None  # TODO; link this property to the student table
+
+    student = db.Column(db.Integer, db.ForeignKey(
+        'students.student_id'), nullable=False)
+    # TODO link this property to the subject table
+    subject = db.Column(db.Integer, db.ForeignKey(
+        'subjects.subject_id'), nullable=False)
+
+    # TODO; link this property to the student table
+    student = db.Column(db.Integer, db.ForeignKey('students.student_id'))
 
     def __repr__(self) -> str:
         return '<Registeration of stud {} in {}>'.format(self.student, self.subject)
@@ -82,14 +101,15 @@ def make_subject():
     print(request.form.get("name"))
     try:
         # TODO: create a new subject and add it to the database
-        pass
+        subject = Subject(name=request.form.get("name"))
+        db.session.add(subject)
+        db.session.commit()
     except:
         # TODO:  rollback in case of any error
-
+        db.session.rollback()
         # TODO: check the school.html for flashed messages (no implementation needed)
         flash("Error occured")
 
-        pass
     # TOOD: redirect to the school endpoint
     return redirect('/school')
 
@@ -97,7 +117,31 @@ def make_subject():
 @app.route('/new', methods=['GET', 'POST'])
 def new():
     if request.method == 'POST':
-        if not request.form['name'] or not request.form['city'] or not request.form['addr']:
+        if not request.form['name'] or not request.form['city'] or \
+                not request.form['addr']:
+            flash('Please enter all the fields', 'error')
+        else:
+            # read image, and save locally
+            image = request.files['image']
+            image.save(os.path.join("static", "upload", image.filename))
+
+            student = students(request.form['name'], request.form['city'],
+                               request.form['addr'], request.form['pin'], image.filename)
+
+            db.session.add(student)
+            db.session.commit()
+            flash('Record was successfully added')
+            return redirect(url_for('student_info', student_id=student.id))
+    return render_template('new_student.html')
+
+# update student info
+
+
+@app.route('/update', methods=['GET', 'POST'])
+def update_student():
+    if request.method == 'POST':
+        if not request.form['name'] or not request.form['city'] or \
+                not request.form['addr']:
             flash('Please enter all the fields', 'error')
         else:
             student = students(request.form['name'], request.form['city'],
@@ -107,7 +151,15 @@ def new():
             db.session.commit()
             flash('Record was successfully added')
             return redirect(url_for('show_all'))
-    return render_template('new.html')
+
+
+@app.route("/student_info/<int:student_id>")
+def student_info(student_id):
+    student = students.query.get(student_id)
+    print("student is", student)
+    if student.image is None:
+        student.image = "default.jpg"
+    return render_template("student_info.html", student=student)
 
 
 @app.route('/hello')

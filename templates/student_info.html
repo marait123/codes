@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      /* CSS styles */
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h3>
+        <!-- <img
+            class="header-icon"
+            src="{{ url_for('static', filename='images/home .jpg') }}"
+            alt="Image Description"
+          /> -->
+        <a href="{{ url_for('show_all')}}"><i class="fa fa-home"></i></a>
+
+        <a href="{{ url_for('show_all') }}">home</a>
+      </h3>
+    </header>
+    <div class="container">
+      <h3>Student Information</h3>
+      <hr />
+
+      <div>
+        <!-- show image -->
+        <img
+          src="{{ url_for('static', filename= 'upload/' + student.image) }}"
+          alt="Student Image"
+          style="width: 100px; height: 100px; border-radius: 50%"
+        />
+        <h4>Name: {{ student.name }}</h4>
+        <p>City: {{ student.city }}</p>
+        <p>Address: {{ student.addr }}</p>
+        <p>PIN: {{ student.pin }}</p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+Flask
+Flask_SQLAlchemy
+Flask_Migrate
+SQLAlchemy
+Werkzeug
+Flask-WTF
+psycopg2-binary
