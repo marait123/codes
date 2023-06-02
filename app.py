@@ -71,11 +71,8 @@ class Register(db.Model):
     student = db.Column(db.Integer, db.ForeignKey(
         'students.student_id'), nullable=False)
     # TODO link this property to the subject table
-    subject = db.Column(db.Integer, db.ForeignKey(
-        'subjects.subject_id'), nullable=False)
 
     # TODO; link this property to the student table
-    student = db.Column(db.Integer, db.ForeignKey('students.student_id'))
 
     def __repr__(self) -> str:
         return '<Registeration of stud {} in {}>'.format(self.student, self.subject)
@@ -91,7 +88,6 @@ def show_all():
 def school():
     sub_form = SubjectForm()
     subjects = Subject.query.all()
-    # , register_form=RegisterForm)
     return render_template("school.html", subjects=subjects, subject_form=sub_form)
 
 
@@ -101,12 +97,10 @@ def make_subject():
     print(request.form.get("name"))
     try:
         # TODO: create a new subject and add it to the database
-        subject = Subject(name=request.form.get("name"))
-        db.session.add(subject)
-        db.session.commit()
+
     except:
         # TODO:  rollback in case of any error
-        db.session.rollback()
+
         # TODO: check the school.html for flashed messages (no implementation needed)
         flash("Error occured")
 
@@ -124,12 +118,8 @@ def new():
             # read image, and save locally
             image = request.files['image']
             image.save(os.path.join("static", "upload", image.filename))
+            # TODO: create user and add it to the database
 
-            student = students(request.form['name'], request.form['city'],
-                               request.form['addr'], request.form['pin'], image.filename)
-
-            db.session.add(student)
-            db.session.commit()
             flash('Record was successfully added')
             return redirect(url_for('student_info', student_id=student.id))
     return render_template('new_student.html')
@@ -155,10 +145,8 @@ def update_student():
 
 @app.route("/student_info/<int:student_id>")
 def student_info(student_id):
-    student = students.query.get(student_id)
-    print("student is", student)
-    if student.image is None:
-        student.image = "default.jpg"
+    # TODO: get student with that student_id
+
     return render_template("student_info.html", student=student)
 
 
